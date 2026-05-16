@@ -1,2 +1,4 @@
 backend/out/
 backend/src/*.class
+sessions.json
+users.json
