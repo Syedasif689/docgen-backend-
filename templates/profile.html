@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - DOCGEN</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #04060f;
+            --card-bg: rgba(17, 24, 39, 0.96);
+            --text-primary: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-glow: rgba(148, 163, 184, 0.2);
+            --accent-violet: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #38bdf8;
+            --shadow-xl: 0 25px 45px -12px rgba(0, 0, 0, 0.5);
+            --transition-default: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        body {
+            background: radial-gradient(ellipse at 18% 25%, rgba(139, 92, 246, 0.18), transparent 55%),
+                        radial-gradient(ellipse at 85% 70%, rgba(56, 189, 248, 0.14), transparent 50%),
+                        var(--bg);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid var(--border-glow);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition-default);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            border-color: var(--accent-violet);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .profile-section, .documents-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--accent-cyan);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-violet);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-violet), var(--accent-blue));
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-default);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .document-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 16px;
+            transition: var(--transition-default);
+        }
+
+        .document-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+
+        .document-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .document-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--accent-cyan);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .password-section {
+            border-top: 1px solid var(--border-glow);
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .error {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .success {
+            color: #10b981;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">DOCGEN</div>
+        <div class="auth-buttons">
+            <a href="/" class="btn">Home</a>
+            <span id="user-info"></span>
+            <button class="btn" id="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="profile-section">
+            <h2 class="section-title">Profile Settings</h2>
+            <form id="profile-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName">
+                </div>
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" placeholder="Tell us about yourself..."></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Update Profile</button>
+                <div id="profile-message"></div>
+            </form>
+
+            <div class="password-section">
+                <h3 class="section-title">Change Password</h3>
+                <form id="password-form">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Change Password</button>
+                    <div id="password-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="documents-section">
+            <h2 class="section-title">Document History</h2>
+            <div id="documents-container">
+                <div class="loading">Loading documents...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Document Modal -->
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-modal">&times;</button>
+            <h3 class="modal-title">Edit Document</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label for="edit-title">Title</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-content">Content</label>
+                    <textarea id="edit-content" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <div id="edit-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Authentication check
+        async function checkAuth() {
+            try {
+                const response = await fetch('/api/auth/check', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (!data.authenticated) {
+                    window.location.href = '/login';
+                    return;
+                }
+                document.getElementById('user-info').textContent = `Welcome, ${data.username}!`;
+                loadProfile();
+                loadDocuments();
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/login';
+            }
+        }
+
+        // Load user profile
+        async function loadProfile() {
+            try {
+                const response = await fetch('/api/profile', {
+                    credentials: 'include'
+                });
+                const profile = await response.json();
+                document.getElementById('username').value = profile.username;
+                document.getElementById('email').value = profile.email;
+                document.getElementById('fullName').value = profile.fullName;
+                document.getElementById('bio').value = profile.bio;
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+            }
+        }
+
+        // Update profile
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('profile-message');
+            messageDiv.className = '';
+
+            const data = {
+                email: document.getElementById('email').value,
+                fullName: document.getElementById('fullName').value,
+                bio: document.getElementById('bio').value
+            };
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    messageDiv.textContent = 'Profile updated successfully!';
+                    messageDiv.className = 'success';
+                } else {
+                    messageDiv.textContent = result.error || 'Failed to update profile';
+                    messageDiv.className = 'error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error updating profile';
+                messageDiv.className = 'error';
+            }
+        });
+
+        // Change password
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('password-message');
+            messageDiv.className = '';
+
+            const data = {
+                currentPassword: document.getElementById('currentPassword').value,
+                newPassword: document.getElementById('newPassword').value
+            };
+
+            try {
+                const response = await fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    messageDiv.textContent = 'Password changed successfully!';
+                    messageDiv.className = 'success';
+                    document.getElementById('password-form').reset();
+                } else {
+                    messageDiv.textContent = result.error || 'Failed to change password';
+                    messageDiv.className = 'error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error changing password';
+                messageDiv.className = 'error';
+            }
+        });
+
+        // Load documents
+        async function loadDocuments() {
+            try {
+                const response = await fetch('/api/documents', {
+                    credentials: 'include'
+                });
+                const documents = await response.json();
+                renderDocuments(documents);
+            } catch (error) {
+                console.error('Failed to load documents:', error);
+                document.getElementById('documents-container').innerHTML = '<div class="error">Failed to load documents</div>';
+            }
+        }
+
+        // Render documents
+        function renderDocuments(documents) {
+            const container = document.getElementById('documents-container');
+            if (documents.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 40px;">No documents found. Start creating some!</div>';
+                return;
+            }
+
+            const html = documents.map(doc => `
+                <div class="document-card">
+                    <div class="document-title">${doc.title}</div>
+                    <div class="document-meta">Type: ${doc.type} | Created: ${new Date(doc.createdAt).toLocaleDateString()}</div>
+                    <div class="document-actions">
+                        <button class="btn btn-small" onclick="editDocument('${doc.id}', '${doc.title}', '${doc.content}')">Edit</button>
+                        <button class="btn btn-small" onclick="deleteDocument('${doc.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="documents-grid">${html}</div>`;
+        }
+
+        // Edit document
+        function editDocument(id, title, content) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-title').value = title;
+            document.getElementById('edit-content').value = content;
+            document.getElementById('edit-modal').classList.add('show');
+        }
+
+        // Save edited document
+        document.getElementById('edit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageDiv = document.getElementById('edit-message');
+            messageDiv.className = '';
+
+            const data = {
+                id: document.getElementById('edit-id').value,
+                title: document.getElementById('edit-title').value,
+                content: document.getElementById('edit-content').value
+            };
+
+            try {
+                const response = await fetch('/api/documents', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    messageDiv.textContent = 'Document updated successfully!';
+                    messageDiv.className = 'success';
+                    document.getElementById('edit-modal').classList.remove('show');
+                    loadDocuments();
+                } else {
+                    messageDiv.textContent = result.error || 'Failed to update document';
+                    messageDiv.className = 'error';
+                }
+            } catch (error) {
+                messageDiv.textContent = 'Error updating document';
+                messageDiv.className = 'error';
+            }
+        });
+
+        // Delete document
+        async function deleteDocument(id) {
+            if (!confirm('Are you sure you want to delete this document?')) return;
+
+            try {
+                const response = await fetch(`/api/documents?id=${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    loadDocuments();
+                } else {
+                    alert('Failed to delete document');
+                }
+            } catch (error) {
+                alert('Error deleting document');
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                window.location.href = '/login';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+
+        // Close modal
+        document.getElementById('close-modal').addEventListener('click', () => {
+            document.getElementById('edit-modal').classList.remove('show');
+        });
+
+        // Initialize
+        checkAuth();
+    </script>
+</body>
+</html>

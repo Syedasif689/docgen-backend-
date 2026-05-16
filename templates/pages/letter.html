@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCGEN | Letters</title>
+    <style>
+                :root { --bg:#04060f; --panel:#111827; --soft:#0f122a; --text:#f8fafc; --muted:#cbd5e1; --line:rgba(148,163,184,.18); --accent:#8b5cf6; --accent-soft:rgba(139,92,246,.12); --shadow:0 24px 60px rgba(0,0,0,.4); }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: var(--text);
+            background: radial-gradient(circle at top left, rgba(139, 92, 246, 0.14), transparent 20%),
+                radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 18%),
+                var(--bg);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.14), transparent 18%),
+                radial-gradient(circle at 80% 15%, rgba(236, 72, 153, 0.1), transparent 16%);
+            mix-blend-mode: screen;
+            z-index: -1;
+            animation: glow 12s ease-in-out infinite alternate;
+        }
+        .page { width: min(1240px, calc(100% - 32px)); margin: 28px auto 40px; }
+        .back { display: inline-block; margin-bottom: 16px; text-decoration: none; color: #ffffff; font-weight: 700; }
+        .hero, .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); }
+        .hero { padding: 28px; margin-bottom: 20px; }
+        .hero h1, .section-head h2, .preview-head h2 { margin: 0; }
+        .hero p, .section-head p, .preview-note, .template-card p, .helper { color: var(--muted); }
+        .workspace { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 20px; }
+        .panel { padding: 24px; }
+        .section-head, .preview-head { margin-bottom: 18px; }
+        .template-bar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 10px; border: 1px solid var(--line); border-radius: 20px; background: rgba(255, 255, 255, 0.06); margin-bottom: 22px; }
+        .template-card { border: 1px solid transparent; border-radius: 16px; padding: 14px 12px; background: transparent; cursor: pointer; transition: 0.2s ease; text-align: left; }
+        .template-card.active { border-color: rgba(139, 92, 246, 0.35); background: rgba(255, 255, 255, 0.06); box-shadow: 0 8px 18px rgba(139, 92, 246, 0.12); }
+        .template-card strong { display: block; margin-bottom: 4px; font-size: 0.95rem; }
+        .template-card p { margin: 0; font-size: 0.83rem; line-height: 1.35; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+        .field { display: grid; gap: 6px; }
+        .field.full { grid-column: 1 / -1; }
+        label { font-size: 0.95rem; font-weight: 700; }
+        input, textarea, select { width: 100%; padding: 12px 14px; border: 1px solid rgba(148, 163, 184, 0.2); border-radius: 14px; background: #111827; color: var(--text); font: inherit; outline: none; }
+        textarea { min-height: 110px; resize: vertical; }
+        input:focus, textarea:focus, select:focus { border-color: rgba(139, 92, 246, 0.45); box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.08); }
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+        button { border: 0; border-radius: 999px; padding: 12px 18px; font: inherit; cursor: pointer; }
+        .primary { background: var(--accent); color: #fff; }
+        .secondary { background: var(--accent-soft); color: var(--accent); }
+        .ghost { background: rgba(255, 255, 255, 0.06); color: var(--text); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .preview-sheet { border: 1px solid var(--line); border-radius: 20px; background: linear-gradient(180deg, #111827 0%, #0f172a 100%); padding: 28px; min-height: 760px; transition: background .2s ease, border-color .2s ease, box-shadow .2s ease; }
+        .preview-sheet.style-1 { background: linear-gradient(180deg, #0f172a 0%, #111827 100%); }
+        .preview-sheet.style-2 { background: linear-gradient(180deg, #111827 0%, #0f172a 100%); border-color: rgba(139, 92, 246, 0.24); }
+        .preview-sheet.style-3 { background: linear-gradient(180deg, #0f172a 0%, #111827 100%); border-color: rgba(56, 189, 248, 0.16); }
+        .preview-sheet.style-4 { background: linear-gradient(180deg, #0f172a 0%, #111827 100%); border-color: rgba(139, 92, 246, 0.12); }
+        .doc-kicker { display: inline-block; padding: 7px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 0.82rem; font-weight: 700; margin-bottom: 16px; }
+        .doc-title { font-size: 1.85rem; margin: 0 0 8px; }
+        .doc-meta { display: flex; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.92rem; margin-bottom: 24px; }
+        .doc-block { margin-top: 22px; }
+        .doc-block h4 { margin: 0 0 8px; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); }
+        .doc-letter { white-space: pre-wrap; line-height: 1.75; }
+        .empty-note { color: var(--muted); font-style: italic; }
+        @media (max-width: 960px) { .workspace { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) { .template-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 720px) { .template-bar, .form-grid { grid-template-columns: 1fr; } }        @keyframes fade-in { from { opacity: 0; transform: translateY(18px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pop-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slide-in { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes swing-in { from { opacity: 0; transform: rotate(-5deg) translateY(24px); } to { opacity: 1; transform: rotate(0deg) translateY(0); } }
+        @keyframes glow {
+            from {
+                transform: scale(1);
+                opacity: 0.76;
+            }
+            to {
+                transform: scale(1.08);
+                opacity: 0.92;
+            }
+        }
+        .preview-sheet.animate-fade { animation: fade-in .42s ease-out both; }
+        .preview-sheet.animate-pop { animation: pop-in .38s cubic-bezier(.22,.75,.36,1.2) both; }
+        .preview-sheet.animate-slide { animation: slide-in .42s ease-out both; }
+        .preview-sheet.animate-swing { animation: swing-in .5s ease-out both; }    </style>
+</head>
+<body>
+    <main class="page">
+        <a class="back" href="/">Back to Home</a>
+        <section class="hero">
+            <h1>Professional Letter Generator</h1>
+            <p>Create polished letters with richer business details, choose a layout style, preview the final document, and download it as a print-ready HTML file.</p>
+        </section>
+        <section class="workspace">
+            <section class="panel">
+                <div class="section-head">
+                    <h2>Select Template</h2>
+                    <p>Choose one of four professional letter types and fill only the details you need.</p>
+                </div>
+                <div class="template-bar">
+                    <button class="template-card active" type="button" data-template="formal-request" data-style="style-1">
+                        <strong>Formal Request</strong>
+                        <p>For approvals, permissions, certificates, and official requests.</p>
+                    </button>
+                    <button class="template-card" type="button" data-template="job-application" data-style="style-2">
+                        <strong>Job Application</strong>
+                        <p>For role applications with qualifications and availability details.</p>
+                    </button>
+                    <button class="template-card" type="button" data-template="complaint" data-style="style-3">
+                        <strong>Complaint Letter</strong>
+                        <p>For issue reporting, escalation, and resolution requests.</p>
+                    </button>
+                    <button class="template-card" type="button" data-template="recommendation-request" data-style="style-4">
+                        <strong>Recommendation Request</strong>
+                        <p>For academic or professional reference requests.</p>
+                    </button>
+                </div>
+               
+                <div class="section-head">
+                    <h2>Enter Details</h2>
+                    <p>There are no visible fake defaults. Your latest typed draft for this page is restored automatically on this browser.</p>
+                </div>
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="senderName">Sender Name</label>
+                        <input id="senderName" type="text" placeholder="Enter your full name">
+                    </div>
+                    <div class="field">
+                        <label for="senderRole">Sender Role / Class / Department</label>
+                        <input id="senderRole" type="text" placeholder="Example: Software Engineer or Class XII-A">
+                    </div>
+                    <div class="field">
+                        <label for="organization">Organization / Institution</label>
+                        <input id="organization" type="text" placeholder="Enter organization or institution name">
+                    </div>
+                    <div class="field">
+                        <label for="date">Date</label>
+                        <input id="date" type="date">
+                    </div>
+                    <div class="field">
+                        <label for="recipientName">Recipient Name</label>
+                        <input id="recipientName" type="text" placeholder="Enter recipient name">
+                    </div>
+                    <div class="field">
+                        <label for="recipientRole">Recipient Role / Designation</label>
+                        <input id="recipientRole" type="text" placeholder="Example: Principal, HR Manager, Dean">
+                    </div>
+                    <div class="field full">
+                        <label for="recipientAddress">Recipient Address</label>
+                        <textarea id="recipientAddress" placeholder="Enter office or institution address"></textarea>
+                    </div>
+                    <div class="field full">
+                        <label for="subject">Subject</label>
+                        <input id="subject" type="text" placeholder="Enter letter subject">
+                    </div>
+                    <div class="field">
+                        <label for="referenceNumber">Reference Number</label>
+                        <input id="referenceNumber" type="text" placeholder="Optional reference or application number">
+                    </div>
+                    <div class="field">
+                        <label for="priority">Priority</label>
+                        <select id="priority">
+                            <option value="">Select priority</option>
+                            <option>Standard</option>
+                            <option>Important</option>
+                            <option>Urgent</option>
+                        </select>
+                    </div>
+                    <div class="field full">
+                        <label for="openingLine">Opening Context</label>
+                        <textarea id="openingLine" placeholder="Briefly introduce the purpose of the letter"></textarea>
+                    </div>
+                    <div class="field full">
+                        <label for="mainDetails">Main Details</label>
+                        <textarea id="mainDetails" placeholder="Add the full request, issue, application details, dates, context, and supporting information"></textarea>
+                    </div>
+                    <div class="field full">
+                        <label for="supportingPoints">Supporting Points / Highlights</label>
+                        <textarea id="supportingPoints" placeholder="Write each point on a new line for stronger professional structure"></textarea>
+                    </div>
+                    <div class="field">
+                        <label for="responseNeeded">Requested Action / Response Needed</label>
+                        <input id="responseNeeded" type="text" placeholder="Example: Kindly approve leave by 12 April 2026">
+                    </div>
+                    <div class="field">
+                        <label for="attachments">Attachments</label>
+                        <input id="attachments" type="text" placeholder="Example: Resume, ID copy, medical proof">
+                    </div>
+                    <div class="field full">
+                        <label for="closingNote">Closing Note</label>
+                        <textarea id="closingNote" placeholder="Add a courteous closing statement"></textarea>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="primary" type="button" id="previewBtn">Generate Preview</button>
+                    <button class="secondary" type="button" id="downloadBtn">Download PDF</button>
+                    <button class="ghost" type="button" id="resetBtn">Reset Form</button>
+                </div>
+                <p class="helper">The page stores your latest entry locally so your recent draft remains available after refresh on the same browser.</p>
+            </section>
+            <section class="panel">
+                <div class="preview-head">
+                    <h2>Preview</h2>
+                    <p class="preview-note">A richer professional layout updates from your current entry.</p>
+                </div>
+                <div class="preview-sheet" id="preview"></div>
+            </section>
+        </section>
+    </main>
+    <script>
+        const preview = document.getElementById("preview");
+        const templateButtons = [...document.querySelectorAll(".template-card")];
+        const fields = {
+            senderName: document.getElementById("senderName"),
+            senderRole: document.getElementById("senderRole"),
+            organization: document.getElementById("organization"),
+            date: document.getElementById("date"),
+            recipientName: document.getElementById("recipientName"),
+            recipientRole: document.getElementById("recipientRole"),
+            recipientAddress: document.getElementById("recipientAddress"),
+            subject: document.getElementById("subject"),
+            referenceNumber: document.getElementById("referenceNumber"),
+            priority: document.getElementById("priority"),
+            openingLine: document.getElementById("openingLine"),
+            mainDetails: document.getElementById("mainDetails"),
+            supportingPoints: document.getElementById("supportingPoints"),
+            responseNeeded: document.getElementById("responseNeeded"),
+            attachments: document.getElementById("attachments"),
+            closingNote: document.getElementById("closingNote")
+        };
+        const templateContent = {
+            "formal-request": { kicker: "Official Correspondence", heading: "Formal Request Letter", greeting: "Respected Sir/Madam,", closing: "Thank you for your time and kind consideration." },
+            "job-application": { kicker: "Career Communication", heading: "Job Application Letter", greeting: "Dear Hiring Manager,", closing: "I would welcome the opportunity to discuss my suitability further." },
+            "complaint": { kicker: "Issue Escalation", heading: "Complaint Letter", greeting: "Respected Sir/Madam,", closing: "I request timely attention and a suitable resolution to this matter." },
+            "recommendation-request": { kicker: "Academic / Professional Reference", heading: "Recommendation Request Letter", greeting: "Dear Sir/Madam,", closing: "I would be grateful for your support and recommendation." }
+        };
+
+        function getActiveTemplate() {
+            const active = document.querySelector(".template-card.active");
+            return active ? active.dataset.template : "formal-request";
+        }
+
+        function getActiveStyle() {
+            const active = document.querySelector(".template-card.active");
+            return active ? active.dataset.style : "style-1";
+        }
+
+        function setActiveTemplate(templateName) {
+            let matched = false;
+            templateButtons.forEach((button, index) => {
+                const isMatch = button.dataset.template === templateName || (!templateName && index === 0);
+                button.classList.toggle("active", isMatch);
+                if (isMatch) matched = true;
+            });
+            if (!matched && templateButtons[0]) {
+                templateButtons[0].classList.add("active");
+            }
+        }
+
+        function escapeHtml(value) {
+            return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function formatLines(value) {
+            if (!value.trim()) return '<p class="empty-note">Add content to populate this section.</p>';
+            return value.split("\n").filter(Boolean).map((line) => `<div>${escapeHtml(line)}</div>`).join("");
+        }
+
+        function formatBullets(value) {
+            const items = value.split("\n").map((item) => item.trim()).filter(Boolean);
+            if (!items.length) return '<p class="empty-note">Add supporting points if needed.</p>';
+            return `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+        }
+
+        function buildPreviewHtml() {
+            const template = templateContent[getActiveTemplate()];
+            const senderName = fields.senderName.value.trim();
+            const senderRole = fields.senderRole.value.trim();
+            const organization = fields.organization.value.trim();
+            const date = fields.date.value.trim();
+            const recipientName = fields.recipientName.value.trim();
+            const recipientRole = fields.recipientRole.value.trim();
+            const recipientAddress = fields.recipientAddress.value.trim();
+            const subject = fields.subject.value.trim();
+            const referenceNumber = fields.referenceNumber.value.trim();
+            const priority = fields.priority.value.trim();
+            const responseNeeded = fields.responseNeeded.value.trim();
+            const attachments = fields.attachments.value.trim();
+
+            return `
+                <article>
+                    <div class="doc-kicker">${escapeHtml(template.kicker)}</div>
+                    <h3 class="doc-title">${escapeHtml(subject || template.heading)}</h3>
+                    <div class="doc-meta">
+                        <span>${escapeHtml(date || "Add date")}</span>
+                        <span>${escapeHtml(priority || "Priority not selected")}</span>
+                        <span>${escapeHtml(referenceNumber || "No reference number")}</span>
+                    </div>
+                    <div class="doc-block">
+                        <h4>Sender</h4>
+                        ${formatLines([senderName, senderRole, organization].filter(Boolean).join("\n"))}
+                    </div>
+                    <div class="doc-block">
+                        <h4>Recipient</h4>
+                        ${formatLines([recipientName, recipientRole, recipientAddress].filter(Boolean).join("\n"))}
+                    </div>
+                    <div class="doc-block">
+                        <h4>Subject</h4>
+                        <div>${escapeHtml(subject || "Add subject")}</div>
+                    </div>
+                    <div class="doc-block doc-letter">
+                        <div>${escapeHtml(template.greeting)}</div>
+                        <br>
+                        <div>${escapeHtml(fields.openingLine.value.trim() || "Add opening context.")}</div>
+                        <br>
+                        <div>${escapeHtml(fields.mainDetails.value.trim() || "Add main details.")}</div>
+                    </div>
+                    <div class="doc-block">
+                        <h4>Supporting Points</h4>
+                        ${formatBullets(fields.supportingPoints.value)}
+                    </div>
+                    <div class="doc-block">
+                        <h4>Requested Action</h4>
+                        <div>${escapeHtml(responseNeeded || "Add requested action or response needed.")}</div>
+                    </div>
+                    <div class="doc-block">
+                        <h4>Attachments</h4>
+                        <div>${escapeHtml(attachments || "No attachments listed.")}</div>
+                    </div>
+                    <div class="doc-block doc-letter">
+                        <div>${escapeHtml(fields.closingNote.value.trim() || template.closing)}</div>
+                        <br>
+                        <div>Yours faithfully,</div>
+                        <div>${escapeHtml(senderName || "Your name")}</div>
+                    </div>
+                </article>
+            `;
+        }
+
+        function buildPrintHtml() {
+            return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Letter Document</title><style>@page{size:A4;margin:16mm}body{font-family:Georgia,serif;background:#f3f5f8;margin:0;padding:24px;color:#1f2937}.page{max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:40px;box-shadow:0 12px 30px rgba(15,23,42,.08)}.doc-kicker{display:inline-block;padding:6px 10px;border-radius:999px;background:#e7f0ff;color:#0f5bd8;font:700 12px Arial,sans-serif;margin-bottom:16px}.doc-title{font-size:30px;margin:0 0 8px}.doc-meta{font:14px Arial,sans-serif;color:#667085;margin-bottom:20px}.doc-block{margin-top:20px;line-height:1.7}.doc-block h4{font:700 13px Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#0f5bd8;margin:0 0 8px}ul{margin:8px 0 0 20px}@media print{body{background:#fff;padding:0}.page{max-width:none;border:0;box-shadow:none;border-radius:0;padding:0}}</style></head><body><main class="page">${buildPreviewHtml()}</main><script>window.onload=()=>{window.print();};<\/script></body></html>`;
+        }
+
+        function pageAnimation() { return "animate-swing"; }
+        function animatePreview() {
+            const animation = pageAnimation();
+            preview.classList.remove("animate-fade", "animate-pop", "animate-slide", "animate-swing");
+            preview.classList.add(animation);
+            preview.addEventListener("animationend", () => preview.classList.remove(animation), { once: true });
+        }
+
+        function updatePreview() {
+            preview.className = `preview-sheet ${getActiveStyle()}`;
+            preview.innerHTML = buildPreviewHtml();
+            animatePreview();
+        }
+
+        function downloadDocument() {
+            const printWindow = window.open("", "_blank");
+            if (!printWindow) return;
+            printWindow.document.open();
+            printWindow.document.write(buildPrintHtml());
+            printWindow.document.close();
+        }
+
+        function setFieldValue(element, value) {
+            if (typeof value !== "string") return;
+            element.value = value;
+        }
+
+        function resetForm() {
+            Object.values(fields).forEach((element) => { element.value = ""; });
+            setActiveTemplate(templateButtons[0] ? templateButtons[0].dataset.template : "formal-request");
+            updatePreview();
+        }
+
+        templateButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                setActiveTemplate(button.dataset.template);
+                updatePreview();
+            });
+        });
+
+        document.getElementById("previewBtn").addEventListener("click", () => { updatePreview(); });
+        document.getElementById("downloadBtn").addEventListener("click", downloadDocument);
+        document.getElementById("resetBtn").addEventListener("click", resetForm);
+        updatePreview();
+    </script>
+</body>
+</html>

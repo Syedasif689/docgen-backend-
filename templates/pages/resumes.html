@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCGEN | Resumes</title>
+    <style>
+                :root { --bg:#04060f; --panel:#111827; --soft:#0f122a; --text:#f8fafc; --muted:#cbd5e1; --line:rgba(148,163,184,.18); --accent:#8b5cf6; --accent-soft:rgba(139,92,246,.12); --shadow:0 24px 60px rgba(0,0,0,.4); }
+        *{box-sizing:border-box}         body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--text);background:radial-gradient(circle at top left, rgba(139,92,246,.14), transparent 20%),radial-gradient(circle at bottom right, rgba(56,189,248,.12), transparent 18%),var(--bg)} .page{width:min(1240px,calc(100% - 32px));margin:28px auto 40px} .back{display:inline-block;margin-bottom:16px;text-decoration:none;color:var(--accent);font-weight:700}
+        .hero,.panel{background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)} .hero{padding:28px;margin-bottom:20px} .workspace{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:20px}.panel{padding:24px}
+        .template-bar,.form-grid{display:grid;gap:14px}.template-bar{grid-template-columns:repeat(4,minmax(0,1fr));padding:10px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,0.06);margin-bottom:20px}.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}
+        .template-card{border:1px solid transparent;border-radius:16px;padding:14px 12px;background:transparent;cursor:pointer;text-align:left}        .template-card.active{border-color:rgba(139,92,246,.35);background:rgba(255,255,255,.06);box-shadow:0 8px 18px rgba(139,92,246,.12)}.template-card strong{display:block;margin-bottom:4px;font-size:.95rem}.template-card p{margin:0;font-size:.83rem;line-height:1.35}
+        label{font-size:.95rem;font-weight:700}         input,textarea{width:100%;padding:12px 14px;border:1px solid rgba(148,163,184,.2);border-radius:14px;background:#111827;color:var(--text);font:inherit;outline:none} textarea{min-height:96px;resize:vertical}
+        .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px} button{border:0;border-radius:999px;padding:12px 18px;font:inherit;cursor:pointer}.primary{background:var(--accent);color:#fff}.secondary{background:var(--accent-soft);color:var(--accent)}.ghost{background:rgba(255,255,255,0.06);color:var(--text);border:1px solid rgba(255,255,255,0.1);color:var(--text);border:1px solid var(--line)}
+                .preview-sheet{border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#111827 0%,#0f172a 100%);padding:28px;min-height:760px;transition:background .2s ease,border-color .2s ease}        .preview-sheet.style-1{background:linear-gradient(180deg,#0f172a 0%,#111827 100%)}        .preview-sheet.style-2{background:linear-gradient(180deg,#111827 0%,#0f172a 100%);border-color:rgba(139,92,246,.24)}        .preview-sheet.style-3{background:linear-gradient(180deg,#0f172a 0%,#111827 100%);border-color:rgba(56,189,248,.16)}        .preview-sheet.style-4{background:linear-gradient(180deg,#0f172a 0%,#111827 100%);border-color:rgba(139,92,246,.12)}.doc-name{font-size:2rem;margin:0}.doc-meta{color:var(--muted);line-height:1.7;margin:10px 0 20px}.doc-block{margin-top:18px}.doc-block h4{margin:0 0 8px;color:var(--accent);font-size:.95rem;text-transform:uppercase;letter-spacing:.04em} .helper,.hero p,.template-card p,.section-note,.empty-note{color:var(--muted)}
+        @media (max-width:960px){.workspace{grid-template-columns:1fr}} @media (max-width:900px){.template-bar{grid-template-columns:repeat(2,minmax(0,1fr))}} @media (max-width:720px){.template-bar,.form-grid{grid-template-columns:1fr}}
+        @keyframes fade-in { from { opacity: 0; transform: translateY(18px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pop-in { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slide-in { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes swing-in { from { opacity: 0; transform: rotate(-5deg) translateY(24px); } to { opacity: 1; transform: rotate(0deg) translateY(0); } }
+        @keyframes zoom-in { from { opacity: 0; transform: scale(0.88); } to { opacity: 1; transform: scale(1); } }
+        .preview-sheet.animate-fade { animation: fade-in .42s ease-out both; }
+        .preview-sheet.animate-pop { animation: pop-in .38s cubic-bezier(.22,.75,.36,1.2) both; }
+        .preview-sheet.animate-slide { animation: slide-in .42s ease-out both; }
+        .preview-sheet.animate-swing { animation: swing-in .5s ease-out both; }
+        .preview-sheet.animate-zoom { animation: zoom-in .36s cubic-bezier(.25,.8,.27,1.04) both; }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <a class="back" href="/">Back to Home</a>
+        <section class="hero"><h1>Professional Resume Generator</h1><p>Create sharper job-focused resumes with accurate hiring details, choose a resume template, preview the result, and download it as styled HTML.</p></section>
+        <section class="workspace">
+            <section class="panel">
+                <h2>Select Template</h2><p class="section-note">Pick the resume style that best matches your target profile.</p>
+                <div class="template-bar">
+                    <button class="template-card active" type="button" data-template="fresher" data-style="style-1"><strong>Fresher Resume</strong><p>For first-job and campus applications.</p></button>
+                    <button class="template-card" type="button" data-template="software" data-style="style-2"><strong>Software Resume</strong><p>For engineering and development roles.</p></button>
+                    <button class="template-card" type="button" data-template="business" data-style="style-3"><strong>Business Resume</strong><p>For analyst, operations, and management roles.</p></button>
+                    <button class="template-card" type="button" data-template="creative" data-style="style-4"><strong>Creative Resume</strong><p>For design, media, and portfolio-based roles.</p></button>
+                </div>
+                <h2>Enter Details</h2><p class="section-note">No visible sample names are prefilled. Your latest browser entry is restored automatically.</p>
+                <div class="form-grid">
+                    <div class="field"><label for="fullName">Full Name</label><input id="fullName" type="text" placeholder="Enter full name"></div>
+                    <div class="field"><label for="targetRole">Target Role</label><input id="targetRole" type="text" placeholder="Enter target job role"></div>
+                    <div class="field full"><label for="contact">Contact Details</label><textarea id="contact" placeholder="Add phone, email, city, LinkedIn, portfolio"></textarea></div>
+                    <div class="field full"><label for="summary">Professional Summary</label><textarea id="summary" placeholder="Write a concise summary aligned with the target role"></textarea></div>
+                    <div class="field full"><label for="experience">Experience</label><textarea id="experience" placeholder="Add job roles, internships, responsibilities, and achievements"></textarea></div>
+                    <div class="field full"><label for="education">Education</label><textarea id="education" placeholder="Add degrees, institutions, and years"></textarea></div>
+                    <div class="field full"><label for="skills">Key Skills</label><textarea id="skills" placeholder="Add core skills, one per line"></textarea></div>
+                    <div class="field full"><label for="projects">Projects / Case Studies</label><textarea id="projects" placeholder="Add important projects, portfolios, or business initiatives"></textarea></div>
+                    <div class="field full"><label for="certifications">Certifications</label><textarea id="certifications" placeholder="Add certifications or training credentials"></textarea></div>
+                    <div class="field"><label for="achievements">Achievements</label><input id="achievements" type="text" placeholder="Add a key achievement line"></div>
+                    <div class="field"><label for="availability">Availability</label><input id="availability" type="text" placeholder="Example: Immediate / 30 days notice"></div>
+                </div>
+                <div class="actions"><button class="primary" type="button" id="previewBtn">Generate Preview</button><button class="secondary" type="button" id="downloadBtn">Download PDF</button><button class="ghost" type="button" id="resetBtn">Reset Form</button></div>
+                <p class="helper">Fill out the form and click Generate Preview to see your resume.</p>
+            </section>
+            <section class="panel"><h2>Preview</h2><div class="preview-sheet" id="preview"></div></section>
+        </section>
+    </main>
+    <script>
+        const preview = document.getElementById("preview");
+        const templateButtons = [...document.querySelectorAll(".template-card")];
+        const fields = { fullName: document.getElementById("fullName"), targetRole: document.getElementById("targetRole"), contact: document.getElementById("contact"), summary: document.getElementById("summary"), experience: document.getElementById("experience"), education: document.getElementById("education"), skills: document.getElementById("skills"), projects: document.getElementById("projects"), certifications: document.getElementById("certifications"), achievements: document.getElementById("achievements"), availability: document.getElementById("availability") };
+        const templates = { fresher:"Fresher Resume", software:"Software Resume", business:"Business Resume", creative:"Creative Resume" };
+        function activeTemplate(){ const active=document.querySelector('.template-card.active'); return active ? active.dataset.template : 'fresher'; }
+        function activeStyle(){ const active=document.querySelector('.template-card.active'); return active ? active.dataset.style : 'style-1'; }
+        function setActiveTemplate(templateName){ let matched=false; templateButtons.forEach((button, index)=>{ const isMatch=button.dataset.template===templateName || (!templateName && index===0); button.classList.toggle('active', isMatch); if(isMatch) matched=true; }); if(!matched && templateButtons[0]) templateButtons[0].classList.add('active'); }
+        function escapeHtml(value){ return value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+        function block(title, value, empty){ return `<div class="doc-block"><h4>${title}</h4><div>${escapeHtml(value.trim()||empty).replace(/\n/g,'<br>')}</div></div>`; }
+        function buildPreviewHtml(){ return `<article><div class="doc-meta">${escapeHtml(templates[activeTemplate()])}</div><h3 class="doc-name">${escapeHtml(fields.fullName.value.trim()||'Your Full Name')}</h3><div class="doc-meta"><strong>${escapeHtml(fields.targetRole.value.trim()||'Add target role')}</strong><br>${escapeHtml(fields.contact.value.trim()||'Add contact details').replace(/\n/g,'<br>')}</div>${block('Professional Summary',fields.summary.value,'Add professional summary.')}${block('Experience',fields.experience.value,'Add experience details.')}${block('Education',fields.education.value,'Add education details.')}${block('Key Skills',fields.skills.value,'Add key skills.')}${block('Projects / Case Studies',fields.projects.value,'Add projects or case studies.')}${block('Certifications',fields.certifications.value,'Add certifications.')}${block('Achievements',fields.achievements.value,'Add key achievement.')}${block('Availability',fields.availability.value,'Add availability.')}</article>`; }
+        function buildPrintHtml(){ return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Resume Document</title><style>@page{size:A4;margin:16mm}body{font-family:Arial,sans-serif;background:#f3f5f8;margin:0;padding:24px;color:#1f2937}.page{max-width:860px;margin:0 auto;background:#fff;border:1px solid #dbe3f0;border-radius:18px;padding:40px;box-shadow:0 12px 30px rgba(15,23,42,.08)}.doc-name{font-size:34px;margin:0}.doc-meta{color:#667085;line-height:1.7;margin:8px 0 18px}.doc-block{margin-top:18px;line-height:1.7}.doc-block h4{margin:0 0 8px;color:#0f5bd8;text-transform:uppercase;font-size:13px}@media print{body{background:#fff;padding:0}.page{max-width:none;border:0;box-shadow:none;border-radius:0;padding:0}}</style></head><body><main class="page">${buildPreviewHtml()}</main><script>window.onload=()=>{window.print();};<\/script></body></html>`; }
+        function pageAnimation() { return "animate-zoom"; }
+        function animatePreview() {
+            const animation = pageAnimation();
+            preview.classList.remove("animate-fade", "animate-pop", "animate-slide", "animate-swing", "animate-zoom");
+            preview.classList.add(animation);
+            preview.addEventListener("animationend", () => preview.classList.remove(animation), { once: true });
+        }
+        function updatePreview(){ preview.className=`preview-sheet ${activeStyle()}`; preview.innerHTML=buildPreviewHtml(); animatePreview(); }
+        function downloadDocument(){ const printWindow=window.open('','_blank'); if(!printWindow) return; printWindow.document.open(); printWindow.document.write(buildPrintHtml()); printWindow.document.close(); }
+        function resetForm(){ Object.values(fields).forEach((e)=>e.value=''); setActiveTemplate(templateButtons[0] ? templateButtons[0].dataset.template : 'fresher'); updatePreview(); }
+        document.getElementById("previewBtn").addEventListener('click', ()=>{ updatePreview(); }); document.getElementById("downloadBtn").addEventListener('click', downloadDocument); document.getElementById("resetBtn").addEventListener('click', resetForm); updatePreview();
+    </script>
+</body>
+</html>
