@@ -165,7 +165,7 @@ public class DocgenServer {
 
     private static Path resolveTemplateRoot() {
         Path[] candidates = new Path[] {
-            Paths.get("templates"),
+           Paths.get("templates"),
             Paths.get("..", "templates"),
             Paths.get("DOCGEN", "templates"),
             Paths.get("..", "DOCGEN", "templates")
@@ -183,7 +183,7 @@ public class DocgenServer {
 
     private static Path resolveDataRoot() {
         Path[] candidates = new Path[] {
-            Paths.get("backend"),
+            Paths.get(System.getProperty("user.dir"), "data"),
             Paths.get(".")
         };
 
